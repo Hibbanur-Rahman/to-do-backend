@@ -34,5 +34,19 @@ const AddTask = async (req, res) => {
     });
   }
 };
+const Edit=async (req,res)=>{
+    try{
+        const {taskName}=req.body;
+        const user= req.user._id;
+        
+
+    }catch(error){
+      return res.status(httpStatusCode.INTERNAL_SERVER_ERROR).json({
+        success: false,
+        message:"Something went wrong!",
+        error: error.message
+      })
+    }
+}
 
 module.exports = { AddTask };
