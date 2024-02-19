@@ -5,7 +5,7 @@ const AddTask = async (req, res) => {
   try {
     const { taskName, completed, tags } = req.body;
     const userId = req.user._id; // Assuming you have middleware to extract user from request
-
+    // const userId = '65d322d0f53f99e43aaaf8f6';
     // Find the user by ID
     const user = await UserModel.findById(userId);
 
@@ -34,19 +34,19 @@ const AddTask = async (req, res) => {
     });
   }
 };
-const Edit=async (req,res)=>{
-    try{
-        const {taskName}=req.body;
-        const user= req.user._id;
-        
+const Edit = async (req, res) => {
+  try {
+    const { taskName } = req.body;
+    const user = req.user._id;
 
-    }catch(error){
-      return res.status(httpStatusCode.INTERNAL_SERVER_ERROR).json({
-        success: false,
-        message:"Something went wrong!",
-        error: error.message
-      })
-    }
+
+  } catch (error) {
+    return res.status(httpStatusCode.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Something went wrong!",
+      error: error.message
+    })
+  }
 }
 
 module.exports = { AddTask };

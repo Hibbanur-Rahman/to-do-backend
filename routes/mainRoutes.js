@@ -5,5 +5,5 @@ const { verifyToken } = require("../middleware/authMiddleware");
 
 Router.post("/register", register);
 Router.post("/login", login);
-Router.post('/add-Task',verifyToken,AddTask);
+Router.post('/add-Task',AddTask);
 module.exports= Router;
