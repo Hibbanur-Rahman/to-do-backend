@@ -5,7 +5,7 @@ const AddTask = async (req, res) => {
   try {
     const { taskName, completed, tags } = req.body;
     const userId = req.user._id; // Assuming you have middleware to extract user from request
-    // const userId = '65d322d0f53f99e43aaaf8f6';
+
     // Find the user by ID
     const user = await UserModel.findById(userId);
 
@@ -34,19 +34,52 @@ const AddTask = async (req, res) => {
     });
   }
 };
-const Edit = async (req, res) => {
+
+const EditTask = async (req, res) => {
   try {
-    const { taskName } = req.body;
-    const user = req.user._id;
+    const { taskId, taskName, completed, tags } = req.body;
+    const userId = req.user._id; // Assuming you have middleware to extract user from request
 
+    // Find the user by ID
+    const user = await UserModel.findById(userId);
 
+    if (!user) {
+      return res.status(httpStatusCode.NOT_FOUND).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Find the task index in the user's tasks array
+    const taskIndex = user.tasks.findIndex(task => task._id === taskId);
+
+    if (taskIndex === -1) {
+      return res.status(httpStatusCode.NOT_FOUND).json({
+        success: false,
+        message: "Task not found",
+      });
+    }
+
+    // Update task details
+    user.tasks[taskIndex].taskName = taskName;
+    user.tasks[taskIndex].completed = completed;
+    user.tasks[taskIndex].tags = tags;
+
+    await user.save();
+
+    return res.status(httpStatusCode.OK).json({
+      success: true,
+      message: "Task updated successfully",
+      task: user.tasks[taskIndex], // Return the updated task
+    });
   } catch (error) {
+    console.error("Error editing task:", error);
     return res.status(httpStatusCode.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "Something went wrong!",
-      error: error.message
-    })
+      error: error.message,
+    });
   }
-}
+};
 
-module.exports = { AddTask };
+module.exports = { AddTask, EditTask };

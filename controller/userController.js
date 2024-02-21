@@ -32,13 +32,13 @@ const register = async (req, res) => {
     // Create new user
     const user = await UserModel.create({ username, email, password: hashedPassword });
 
-    // Generate token
-    const token = await getToken(user._id);
+    // // Generate token
+    // const token = await getToken(user._id);
 
     return res.status(httpStatusCode.CREATED).json({
       success: true,
       message: "User registered successfully!",
-      data: { user, token },
+      data: { user },
     });
   } catch (error) {
     console.error("Error registering user:", error);
