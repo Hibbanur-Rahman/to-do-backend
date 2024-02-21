@@ -1,40 +1,36 @@
-const jwt= require('jsonwebtoken');
-const secretKey='Rahman@1234';
-const httpStatusCode= require('../constant/httpStatusCode');
+const jwt = require('jsonwebtoken');
+const secretKey = 'Rahman@1234';
+const httpStatusCode = require('../constant/httpStatusCode');
 
-async function getToken(req,res){
-    const user=req.body;
-    const token= await jwt.sign({user},secretKey,{expiresIn: '1h'});
-    console.log(token);
+async function getToken(req, res) {
+    const user = req.body;
+    const token = await jwt.sign({ user }, secretKey, { expiresIn: '1h' });
+
     return token;
 }
 
-async function verifyToken(req,res,next){
+async function verifyToken(req, res, next) {
+    const token = req.headers.authorization;
 
-    try{
-        const token= req.cookies.token;  // Assuming the token is stored in a cookie named 'token'
+    if (!token) {
+        return res.status(httpStatusCode.UNAUTHORIZED).json({ success: false, message: 'Unauthorized: Token not provided' });
+    }
 
-        if(!token){
-            return res.status(httpStatusCode.UNAUTHORIZED).json({
-                success:false,
-                message:'Unauthorized: Token not provided',
-            });
-        }
-
-        const decoded= await jwt.verify(token,secretKey);
-        req.user= decoded.user // You can access the user data in your routes
-
+    try {
+        // Split the authorization header by space and directly use the token
+        const decoded = jwt.verify(token, secretKey);
+        req.user = decoded.user;
+        console.log(req.user)
+        console.log("token:", token);
+        console.log("secreate key:", secretKey)
         next();
-    }catch(error){
-        console.error('Error verifying token:',error);
-        return res.status(httpStatusCode.BAD_REQUEST).json({
-            success: false,
-            message:" the Bad request"
-        })
+    } catch (error) {
+        console.error('Error verifying token:', error);
+        return res.status(httpStatusCode.UNAUTHORIZED).json({ success: false, message: 'Unauthorized: Invalid token' });
     }
 }
 
-module.exports={
+module.exports = {
     getToken,
     verifyToken
 }

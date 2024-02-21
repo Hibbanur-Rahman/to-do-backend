@@ -4,10 +4,12 @@ const httpStatusCode = require('../constant/httpStatusCode');
 const AddTask = async (req, res) => {
   try {
     const { taskName, completed, tags } = req.body;
-    const userId = req.user._id; // Assuming you have middleware to extract user from request
+   
+    console.log(req.user);
+    const username = req.user.username; // Assuming you have middleware to extract user from request
 
     // Find the user by ID
-    const user = await UserModel.findById(userId);
+    const user = await UserModel.findById(username);
 
     if (!user) {
       return res.status(httpStatusCode.NOT_FOUND).json({
