@@ -1,9 +1,10 @@
 const jwt = require('jsonwebtoken');
-const secretKey = 'Rahman@1234';
+require("dotenv").config();
+// const secretKey = 'Rahman@1234';
 const httpStatusCode = require('../constant/httpStatusCode');
 
 async function getToken(user) {
-    const token = await jwt.sign({ user }, secretKey, { expiresIn: '1h' });
+    const token = await jwt.sign({ user }, process.env.JWT_SECRET, { expiresIn: '1h' });
     return token;
 }
 
@@ -16,11 +17,11 @@ async function verifyToken(req, res, next) {
 
     try {
         // Split the authorization header by space and directly use the token
-        const decoded = jwt.verify(token, secretKey);
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded.user;
         console.log(req.user)
         console.log("token:", token);
-        console.log("secreate key:", secretKey)
+        console.log("secreate key:",process.env.JWT_SECRET)
         next();
     } catch (error) {
         console.error('Error verifying token:', error);
