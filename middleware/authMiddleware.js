@@ -2,10 +2,8 @@ const jwt = require('jsonwebtoken');
 const secretKey = 'Rahman@1234';
 const httpStatusCode = require('../constant/httpStatusCode');
 
-async function getToken(req, res) {
-    const user = req.body;
+async function getToken(user) {
     const token = await jwt.sign({ user }, secretKey, { expiresIn: '1h' });
-
     return token;
 }
 

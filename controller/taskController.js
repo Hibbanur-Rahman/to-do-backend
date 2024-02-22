@@ -6,10 +6,10 @@ const AddTask = async (req, res) => {
     const { taskName, completed, tags } = req.body;
    
     console.log(req.user);
-    const username = req.user.username; // Assuming you have middleware to extract user from request
+    const userId= req.user._id; // Assuming you have middleware to extract user from request
 
     // Find the user by ID
-    const user = await UserModel.findById(username);
+    const user = await UserModel.findById(userId);
 
     if (!user) {
       return res.status(httpStatusCode.NOT_FOUND).json({

@@ -82,7 +82,7 @@ const login = async (req, res) => {
     }
 
     // Generate token
-    const token = await getToken(user._id);
+    const token = await getToken(user);
 
     return res.status(httpStatusCode.OK).json({
       success: true,
