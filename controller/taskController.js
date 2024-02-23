@@ -84,4 +84,68 @@ const EditTask = async (req, res) => {
   }
 };
 
-module.exports = { AddTask, EditTask };
+
+const ViewTask= async (req,res)=>{
+      try{
+        const userId=req.user._id;
+        console.log(userId);
+        const user=await UserModel.findById(userId);
+        if(!user){
+          return res.status(httpStatusCode.NOT_FOUND).json({
+            success:false,
+            message:"user is not found",
+          })
+        }
+
+        return res.status(httpStatusCode.OK).json({
+          success:true,
+          message:"view successfully",
+          data:user.tasks,
+        })
+      }catch(error){
+        return res.status(httpStatusCode.INTERNAL_SERVER_ERROR).json({
+          success: false,
+          message:"something went wrong !",
+          error: error.message
+        })
+      }
+}
+
+const UpdateCompleted=async (req,res)=>{
+  try{
+
+    const {keyIndex}=req.body;
+    if(!keyIndex){
+      return res.status(httpStatusCode.BAD_REQUEST).json({
+        success:false,
+        message:"keyIndex value is not defined!!",
+      })
+    }
+    const userId=req.user._id;
+    
+    const user=await UserModel.findById(userId);
+    if(!user){
+      return res.status(httpStatusCode.NOT_FOUND).json({
+        success: false,
+        message:"user is not found!!",
+      })
+    }
+
+    console.log(user.tasks[keyIndex])
+
+    return res.status(httpStatusCode.OK).json({
+      success:true,
+      message:"updated successfully !!",
+      data:user.tasks[keyIndex]
+    })
+
+  }catch(error){
+    return res.status(httpStatusCode.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message:"something went wrong!!",
+      error: error.message
+    })
+  }
+}
+
+module.exports = { AddTask, EditTask,ViewTask,UpdateCompleted };
