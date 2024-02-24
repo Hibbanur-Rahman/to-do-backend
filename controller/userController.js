@@ -99,7 +99,32 @@ const login = async (req, res) => {
   }
 };
 
+
+const ViewUser = async (req, res) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      return res.status(httpStatusCode.NOT_FOUND).json({
+        success: false,
+        message: "user is not found"
+      })
+    }
+
+    return res.status(httpStatusCode.OK).json({
+      success: true,
+      message: "user is found successfully",
+      user
+    })
+  } catch (error) {
+    return res.status(httpStatusCode.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Something went wrong !!",
+      error: error.message
+    })
+  }
+}
 module.exports = {
   register,
   login,
+  ViewUser
 };

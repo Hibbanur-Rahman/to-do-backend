@@ -20,8 +20,8 @@ async function verifyToken(req, res, next) {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         req.user = decoded.user;
         console.log(req.user)
-        console.log("token:", token);
-        console.log("secreate key:",process.env.JWT_SECRET)
+        // console.log("token:", token);
+        // console.log("secreate key:",process.env.JWT_SECRET)
         next();
     } catch (error) {
         console.error('Error verifying token:', error);

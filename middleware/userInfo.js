@@ -5,7 +5,7 @@ module.exports.userInfo = async (req, res, next) => {
 
   try {
     const foundUser = await userModel.findOne({ email: user.email });
-    
+
     if (!foundUser) {
       return res.status(404).json({ success: false, message: 'User not found' });
     }

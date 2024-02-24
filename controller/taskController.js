@@ -4,9 +4,9 @@ const httpStatusCode = require('../constant/httpStatusCode');
 const AddTask = async (req, res) => {
   try {
     const { taskName, completed, tags } = req.body;
-   
+
     console.log(req.user);
-    const userId= req.user._id; // Assuming you have middleware to extract user from request
+    const userId = req.user._id; // Assuming you have middleware to extract user from request
 
     // Find the user by ID
     const user = await UserModel.findById(userId);
@@ -85,67 +85,77 @@ const EditTask = async (req, res) => {
 };
 
 
-const ViewTask= async (req,res)=>{
-      try{
-        const userId=req.user._id;
-        console.log(userId);
-        const user=await UserModel.findById(userId);
-        if(!user){
-          return res.status(httpStatusCode.NOT_FOUND).json({
-            success:false,
-            message:"user is not found",
-          })
-        }
-
-        return res.status(httpStatusCode.OK).json({
-          success:true,
-          message:"view successfully",
-          data:user.tasks,
-        })
-      }catch(error){
-        return res.status(httpStatusCode.INTERNAL_SERVER_ERROR).json({
-          success: false,
-          message:"something went wrong !",
-          error: error.message
-        })
-      }
-}
-
-const UpdateCompleted=async (req,res)=>{
-  try{
-
-    const {keyIndex}=req.body;
-    if(!keyIndex){
-      return res.status(httpStatusCode.BAD_REQUEST).json({
-        success:false,
-        message:"keyIndex value is not defined!!",
-      })
-    }
-    const userId=req.user._id;
-    
-    const user=await UserModel.findById(userId);
-    if(!user){
+const ViewTask = async (req, res) => {
+  try {
+    const userId = req.user._id;
+    console.log(userId);
+    const user = await UserModel.findById(userId);
+    if (!user) {
       return res.status(httpStatusCode.NOT_FOUND).json({
         success: false,
-        message:"user is not found!!",
+        message: "user is not found",
       })
     }
 
-    console.log(user.tasks[keyIndex])
-
     return res.status(httpStatusCode.OK).json({
-      success:true,
-      message:"updated successfully !!",
-      data:user.tasks[keyIndex]
+      success: true,
+      message: "view successfully",
+      data: user.tasks,
     })
-
-  }catch(error){
+  } catch (error) {
     return res.status(httpStatusCode.INTERNAL_SERVER_ERROR).json({
       success: false,
-      message:"something went wrong!!",
+      message: "something went wrong !",
       error: error.message
     })
   }
 }
 
-module.exports = { AddTask, EditTask,ViewTask,UpdateCompleted };
+const UpdateCompleted = async (req, res) => {
+  try {
+    const { keyIndex } = req.body;
+    console.log(keyIndex);
+
+    if (!keyIndex) {
+      return res.status(httpStatusCode.BAD_REQUEST).json({
+        success: false,
+        message: "Invalid or missing keyIndex value!",
+      });
+    }
+
+    const userId = req.user._id;
+    const user = await UserModel.findById(userId);
+
+    if (!user) {
+      return res.status(httpStatusCode.NOT_FOUND).json({
+        success: false,
+        message: "User not found!",
+      });
+    }
+
+    if (keyIndex < 0 || keyIndex >= user.tasks.length) {
+      return res.status(httpStatusCode.BAD_REQUEST).json({
+        success: false,
+        message: "Invalid keyIndex value!",
+      });
+    }
+
+    // Update the completion status of the task at the specified index
+    user.tasks[keyIndex].completed = true;
+    await user.save();
+
+    return res.status(httpStatusCode.OK).json({
+      success: true,
+      message: "Task completion status updated successfully!",
+      data: user.tasks[keyIndex],
+    });
+  } catch (error) {
+    return res.status(httpStatusCode.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Something went wrong!",
+      error: error.message,
+    });
+  }
+}
+
+module.exports = { AddTask, EditTask, ViewTask, UpdateCompleted };
